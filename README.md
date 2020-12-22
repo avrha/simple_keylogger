@@ -1,4 +1,4 @@
-# twitch_keylogger
+# simple_keylogger
 A simple key logger written python.
 
 # TODO
